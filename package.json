@@ -4,7 +4,7 @@
   "description": "Node.js Event emiiter that allows for complex event name pattern matching",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "mocha test --reporter=spec"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,11 @@
   "bugs": {
     "url": "https://github.com/esatterwhite/node-pattern-emitter/issues"
   },
-  "homepage": "https://github.com/esatterwhite/node-pattern-emitter"
+  "homepage": "https://github.com/esatterwhite/node-pattern-emitter",
+  "dependencies": {
+    "crossroads": "^0.12.0"
+  },
+  "devDependencies": {
+    "mocha": "^1.18.2"
+  }
 }
