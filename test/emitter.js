@@ -75,23 +75,37 @@ describe('PatternEmitter', function(){
 			emitter.emit("bar", "baz");
 		})
 
+		it("should accept optional paterns", function(){
+			var emitter = new PatternEmitter();
+
+			emitter.addListener('sometimes/:match:', function( value, match ){
+				if( match ){
+					assert.equal( value, 100 )
+				}
+			})
+
+			emitter.emit( "sometimes" )
+			emitter.emit('sometimes/events',100)
+		})
+
 		describe("#addListener - pattern rules", function(){
 
 			it("should accept regular expressions", function(){
 				var emitter = new PatternEmitter();
 				var rules = {
 					event:/(\d+)/
-				}
+				};
 				
 				emitter.addListener('pattern_{event}', function( value, event ){
 					assert.equal( event, "12345" )
-					assert.equal( value,1  )
+					assert.equal( value, 1  )
 				}, rules )
 
 
 				emitter.emit("pattern_12345", 1 )
-				emitter.emit("pattern_shoes", 1 )
+				emitter.emit("pattern_shoes", 1 ) // should never happen
 			})
 		})
 	})
+
 });
