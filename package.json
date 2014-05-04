@@ -1,0 +1,26 @@
+{
+  "name": "pattern-emitter",
+  "version": "0.0.1",
+  "description": "Node.js Event emiiter that allows for complex event name pattern matching",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/esatterwhite/node-pattern-emitter.git"
+  },
+  "keywords": [
+    "events",
+    "emitter",
+    "crossroads",
+    "pattern",
+    "glob"
+  ],
+  "author": "Eric Satterwhite",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esatterwhite/node-pattern-emitter/issues"
+  },
+  "homepage": "https://github.com/esatterwhite/node-pattern-emitter"
+}

@@ -1,0 +1,7 @@
+node_modules
+*.sublime-*
+.*.swp
+.project
+.DS_Store
+
+
