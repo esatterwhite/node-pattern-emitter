@@ -1,6 +1,6 @@
 {
   "name": "pattern-emitter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Node.js Event emiiter that allows for complex event name pattern matching",
   "main": "index.js",
   "scripts": {
