@@ -124,13 +124,17 @@ var emitter        = new PatternEmitter();
 // Event is dispatched if
 // 1) bar is either baz or far
 // 2) AND foo is a number greater than 10
+// 3) AND the current user has previously been authenticated.
 var rules = {
 	foo:/(\d+)/
 	,bar: function( value, request, valuesobj ){
 		if( value in ['baz', 'far'] ){
 			// foo has already been validated to be a number
 			if( valuesobj.foo > 10 ){
-				return true;
+				// this is not a real thing, just an example
+			        if( request.user.is_authenticated ){
+			        	return true;
+			        }
 			}
 		}
 		return false;
