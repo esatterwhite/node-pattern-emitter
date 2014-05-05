@@ -44,20 +44,26 @@ emitter.emit('foobar')        // nothing happens
 
 ### Wildcard Matching
 
-Pattern Emitter allows you to match against wild cards so you don't have to account for every named event within your application. For Example, in complex CRUD applications, listening to create, update or delete event pipelines can get messy. It could also be used to re-disaptch / transform events
+Pattern Emitter allows you to match against wild cards so you don't have to account for every named event within your application with `{*}` notation. For Example, in complex CRUD applications, listening to create, update or delete event pipelines can get messy. It could also be used to re-disaptch / transform events
 
 ```js
 var PatternEmitter = require('pattern-emitter');
 var emitter = new PatternEmitter();
 
-emitter.on("before-{action}" function( instance, action ){
+emitter.on("before-{action*}" function( instance, action ){
 	// do some crud magic
 	emitter.emit('after-'+action, instance)
+});
+
+emitter.on('manage-{datatype}', function(datatype){
+     // trip off some background tasks...
+     console.log('managing %s ! ', datatype )
 });
 
 emitter.emit("before-add"); // -> dispatches after-add
 emitter.emit("before-update"); // -> dispatches aftrer-update
 emitter.emit("before-delete"); // -> dispatches after delete
+emitter.emit("before-manage-blogpost"); // -> dispatches after-manage-blogpost -> "managing blogpost"
 ```
 
 ### Event Validation
