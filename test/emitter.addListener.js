@@ -87,25 +87,6 @@ describe('PatternEmitter', function(){
 			emitter.emit( "sometimes" )
 			emitter.emit('sometimes/events',100)
 		})
-
-		describe("#addListener - pattern rules", function(){
-
-			it("should accept regular expressions", function(){
-				var emitter = new PatternEmitter();
-				var rules = {
-					event:/(\d+)/
-				};
-				
-				emitter.addListener('pattern_{event}', function( value, event ){
-					assert.equal( event, "12345" )
-					assert.equal( value, 1  )
-				}, rules )
-
-
-				emitter.emit("pattern_12345", 1 )
-				emitter.emit("pattern_shoes", 1 ) // should never happen
-			})
-		})
 	})
 
 });
