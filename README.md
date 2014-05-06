@@ -1,7 +1,7 @@
 node-pattern-emitter
 ====================
 
-Node Pattern-Emitter is a full implementation of the event emitter API from Node.js that allows you to attach event handlers to complex patterns where the pattern matches are passed as arguments to the handlers. This, over the simple string matching with the default EventEmitter, can open the doors for highly generic and flexible code.
+Node Pattern-Emitter is a full implementation of the event emitter API from Node.js built ontop of the [crossroads.js](http://millermedeiros.github.io/crossroads.js/#crossroads-add_route) parser which allows you to attach event handlers to complex patterns where the pattern matches are passed as arguments to the handlers. This, over the simple string matching with the default EventEmitter, can open the doors for highly generic and flexible code.
 
 
 ## Installation
@@ -32,39 +32,81 @@ In the most simple case, you can include a pattern group in the name of your eve
 var PatternEmitter = require('pattern-emitter');
 var emitter = new PatternEmitter();
 
-emitter.on('object-{type}', function( type ){
+emitter.on('object/{type}', function( type ){
 	console.log( type )
 })
 
-emitter.emit('object-create') // -> create
-emitter.emit('object-update') // -> update
-emitter.emit('object-delete') // -> delete
-emitter.emit('foobar')        // nothing happens
+emitter.emit('object/create') // -> create
+emitter.emit('object/update') // -> update
+emitter.emit('object/delete') // -> delete
+emitter.emit('foobar')        // No Match
 ```
 
 ### Wildcard Matching
 
-Pattern Emitter allows you to match against wild cards so you don't have to account for every named event within your application with `{*}` notation. For Example, in complex CRUD applications, listening to create, update or delete event pipelines can get messy. It could also be used to re-disaptch / transform events
+Because of the nature of the crossroads parser, *slashes in event names are treated as rough patern delimiters*. Pattern Emitter allows you to match against wild cards to work around this edge case, in addition to mitigate the need to account for every named event within your application with `{*}` notation. For Example, in complex CRUD applications, listening to create, update or delete event pipelines can get messy. It could also be used to re-disaptch / transform events.
 
 ```js
 var PatternEmitter = require('pattern-emitter');
 var emitter = new PatternEmitter();
 
-emitter.on("before-{action*}" function( instance, action ){
-	// do some crud magic
-	emitter.emit('after-'+action, instance)
+emitter.on("before/{action*}", function( action ){
+    // do some crud magic
+    emitter.emit( action )
+    emitter.emit("after/" + action)
 });
 
-emitter.on('manage-{datatype}', function(datatype){
+emitter.on('manage/{datatype}', function(datatype){
      // trip off some background tasks...
      console.log('managing %s ! ', datatype )
 });
 
-emitter.emit("before-add"); // -> dispatches after-add
-emitter.emit("before-update"); // -> dispatches aftrer-update
-emitter.emit("before-delete"); // -> dispatches after delete
-emitter.emit("before-manage-blogpost"); // -> dispatches after-manage-blogpost -> "managing blogpost"
+emitter.on('add/{amount}/{type}', function(amount, type){
+	console.log("I should add %s more %s", amount, type )
+})
+
+emitter.emit("before/update"); // -> dispatches aftrer/update
+emitter.emit("before/delete"); // -> dispatches after delete
+emitter.emit("before/add/1/post"); // -> dispatches after/add/1/post -> logs "I should add 1 more post"
+emitter.emit("before/manage/blogpost"); // -> logs manage/blogpost
 ```
+
+### Optional Patterns
+
+Rather than having to attatch to event handlers that do essentially the same thing around expected inputs, you can attach a single handler to an event with optional pattern groups with the `: :` syntax. *NOTE* - This also means your event names can not contain colons, they are treaded differently.
+
+```js
+
+var PatternEmitter = require("pattern-emitter");
+var emitter = new PatternEmitter();
+
+emitter.on('foo:bar:', function( bar ){
+	console.log( bar );
+});
+
+emitter.emit('foo') // undefined
+emitter.emit('foo/bar') // bar
+emitter.emit('foo/bar/baz') // No Match!
+
+```
+
+Optional parameters can also be combined with wild cards
+
+```js
+
+var PatternEmitter = require("pattern-emitter");
+var emitter = new PatternEmitter();
+
+emitter.on('foo:bar*:', function( bar ){
+	console.log( bar );
+});
+
+emitter.emit('foo') // undefined
+emitter.emit('foo/bar') // bar
+emitter.emit('foo/bar/baz') // bar/baz
+
+```
+
 
 ### Event Validation
 
@@ -141,11 +183,12 @@ var rules = {
 	};
 };
 
-emitter.on('pattern-{foo}-{bar}', function( type ){
+emitter.on('pattern/{foo}/{bar}', function( type ){
 	console.log( foo, bar );
 }, rules);
 
-emitter.emit('pattern-1234-baz') // -> 1234, baz
-emitter.emit('pattern-2-far') // -> 4, far
-emitter.emit('pattern-one-baz') // nothing happens
+emitter.emit('pattern/1234/baz') // -> 1234, baz
+emitter.emit('pattern/2/far') // -> 2, far
+emitter.emit('pattern/one/baz') // nothing happens
+emitter.emit('pattern/1') // no match
 ```
