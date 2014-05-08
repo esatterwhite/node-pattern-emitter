@@ -16,9 +16,10 @@ describe("PatternEmitter", function(){
 				assert.equal( value, 1  )
 			}, rules )
 
-
-			emitter.emit("pattern_12345", 1 )
-			emitter.emit("pattern_shoes", 1 ) // should never happen
+			assert.doesNotThrow(function(){
+				emitter.emit("pattern_12345", 1 )
+				emitter.emit("pattern_shoes", 1 ) // should never happen
+			})
 		})
 
 		it("should accept array of literal values", function(){
@@ -28,17 +29,24 @@ describe("PatternEmitter", function(){
 			};
 			
 			emitter.addListener('pattern_{event}', function( value, event ){
-				var is_valid = event in [ 'foo','bar','baz']
+				var valid = {
+					foo:1
+					,bar:1
+					,baz:1
+				}
+				var is_valid = valid.hasOwnProperty( event )
+
 				if( is_valid ){
-					asert.ok( true )
+					assert.ok( true )
 				} else{
 					assert.ok( false )
 				}
 			}, rules )
 
 
-			emitter.emit("pattern_foo", 1 ) 
 			emitter.emit("pattern_bar", 1 ) 
+			emitter.emit("pattern_foo", 1 ) 
+			emitter.emit("pattern_foo", 1 ) 
 			emitter.emit("pattern_baz", 1 ) 
 			emitter.emit("pattern_test", 1 ) // should never happen
 		})
