@@ -1,7 +1,7 @@
 {
-  "name": "pattern-emitter",
+  "name": "pattern-emitter2",
   "version": "0.1.0",
-  "description": "Node.js Event emiiter that allows for complex event name pattern matching",
+  "description": "Node.js Event emiiter that allows for complex event name pattern matching and event validation rules",
   "main": "index.js",
   "scripts": {
     "test": "mocha test --reporter=spec"
