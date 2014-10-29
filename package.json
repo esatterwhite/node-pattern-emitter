@@ -26,6 +26,7 @@
   "dependencies": {
     "crossroads": "^0.12.0"
   },
+  "bundledDependencies":["crossroads"],
   "devDependencies": {
     "mocha": "^1.18.2"
   }
